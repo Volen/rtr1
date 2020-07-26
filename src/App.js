@@ -1,18 +1,18 @@
-import React from 'react';
+import React from "react";
 
 const initialStories = [
   {
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
+    title: "React",
+    url: "https://reactjs.org/",
+    author: "Jordan Walke",
     num_comments: 3,
     points: 4,
     objectID: 0,
   },
   {
-    title: 'Redux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
+    title: "Redux",
+    url: "https://redux.js.org/",
+    author: "Dan Abramov, Andrew Clark",
     num_comments: 2,
     points: 5,
     objectID: 1,
@@ -32,26 +32,23 @@ const useSemiPersistentState = (key, initialState) => {
 };
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useSemiPersistentState(
-    'search',
-    'React'
-  );
+  const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
 
   const [stories, setStories] = React.useState(initialStories);
 
-  const handleRemoveStory = item => {
+  const handleRemoveStory = (item) => {
     const newStories = stories.filter(
-      story => item.objectID !== story.objectID
+      (story) => item.objectID !== story.objectID
     );
 
     setStories(newStories);
   };
 
-  const handleSearch = event => {
+  const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const searchedStories = stories.filter(story =>
+  const searchedStories = stories.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -78,7 +75,7 @@ const App = () => {
 const InputWithLabel = ({
   id,
   value,
-  type = 'text',
+  type = "text",
   onInputChange,
   isFocused,
   children,
@@ -107,12 +104,8 @@ const InputWithLabel = ({
 };
 
 const List = ({ list, onRemoveItem }) =>
-  list.map(item => (
-    <Item
-      key={item.objectID}
-      item={item}
-      onRemoveItem={onRemoveItem}
-    />
+  list.map((item) => (
+    <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
   ));
 
 const Item = ({ item, onRemoveItem }) => (
