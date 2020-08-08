@@ -1,7 +1,7 @@
-import React from 'react';
-import axios from 'axios';
+import React from "react";
+import axios from "axios";
 
-const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -17,30 +17,30 @@ const useSemiPersistentState = (key, initialState) => {
 
 const storiesReducer = (state, action) => {
   switch (action.type) {
-    case 'STORIES_FETCH_INIT':
+    case "STORIES_FETCH_INIT":
       return {
         ...state,
         isLoading: true,
         isError: false,
       };
-    case 'STORIES_FETCH_SUCCESS':
+    case "STORIES_FETCH_SUCCESS":
       return {
         ...state,
         isLoading: false,
         isError: false,
         data: action.payload,
       };
-    case 'STORIES_FETCH_FAILURE':
+    case "STORIES_FETCH_FAILURE":
       return {
         ...state,
         isLoading: false,
         isError: true,
       };
-    case 'REMOVE_STORY':
+    case "REMOVE_STORY":
       return {
         ...state,
         data: state.data.filter(
-          story => action.payload.objectID !== story.objectID
+          (story) => action.payload.objectID !== story.objectID
         ),
       };
     default:
@@ -49,48 +49,43 @@ const storiesReducer = (state, action) => {
 };
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useSemiPersistentState(
-    'search',
-    'React'
-  );
+  const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
 
-  const [url, setUrl] = React.useState(
-    `${API_ENDPOINT}${searchTerm}`
-  );
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
-  const [stories, dispatchStories] = React.useReducer(
-    storiesReducer,
-    { data: [], isLoading: false, isError: false }
-  );
+  const [stories, dispatchStories] = React.useReducer(storiesReducer, {
+    data: [],
+    isLoading: false,
+    isError: false,
+  });
 
-  const handleFetchStories = React.useCallback(() => {
-    dispatchStories({ type: 'STORIES_FETCH_INIT' });
+  const handleFetchStories = React.useCallback(async () => {
+    dispatchStories({ type: "STORIES_FETCH_INIT" });
 
-    axios
-      .get(url)
-      .then(result => {
-        dispatchStories({
-          type: 'STORIES_FETCH_SUCCESS',
-          payload: result.data.hits,
-        });
-      })
-      .catch(() =>
-        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
-      );
+    try {
+      const result = await axios.get(url);
+
+      dispatchStories({
+        type: "STORIES_FETCH_SUCCESS",
+        payload: result.data.hits,
+      });
+    } catch {
+      dispatchStories({ type: "STORIES_FETCH_FAILURE" });
+    }
   }, [url]);
 
   React.useEffect(() => {
     handleFetchStories();
   }, [handleFetchStories]);
 
-  const handleRemoveStory = item => {
+  const handleRemoveStory = (item) => {
     dispatchStories({
-      type: 'REMOVE_STORY',
+      type: "REMOVE_STORY",
       payload: item,
     });
   };
 
-  const handleSearchInput = event => {
+  const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
   };
 
@@ -111,11 +106,7 @@ const App = () => {
         <strong>Search:</strong>
       </InputWithLabel>
 
-      <button
-        type="button"
-        disabled={!searchTerm}
-        onClick={handleSearchSubmit}
-      >
+      <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>
         Submit
       </button>
 
@@ -135,7 +126,7 @@ const App = () => {
 const InputWithLabel = ({
   id,
   value,
-  type = 'text',
+  type = "text",
   onInputChange,
   isFocused,
   children,
@@ -164,12 +155,8 @@ const InputWithLabel = ({
 };
 
 const List = ({ list, onRemoveItem }) =>
-  list.map(item => (
-    <Item
-      key={item.objectID}
-      item={item}
-      onRemoveItem={onRemoveItem}
-    />
+  list.map((item) => (
+    <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
   ));
 
 const Item = ({ item, onRemoveItem }) => (
